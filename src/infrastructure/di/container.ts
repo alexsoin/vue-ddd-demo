@@ -4,8 +4,6 @@ import { EmployeeRepository } from '../../domain/repositories/employee.repositor
 import { DepartmentRepository } from '../../domain/repositories/department.repository';
 import { EmployeeService } from '../../domain/services/employee.service';
 import { DepartmentService } from '../../domain/services/department.service';
-import { SourceAAdapter } from '../indexeddb/adapters/source-a.adapter';
-import { SourceBAdapter } from '../indexeddb/adapters/source-b.adapter';
 
 /**
  * Контейнер зависимостей (Dependency Injection)
@@ -30,7 +28,7 @@ class DIContainer {
 		try {
 			console.log('Initializing DI container...');
 			// Инициализация IndexedDB
-			this.dbClient = new IDBClient();
+			this.dbClient = IDBClient.getInstance();
 			console.log('Opening IndexedDB...');
 			await initDB(this.dbClient);
 			console.log('IndexedDB opened successfully');
@@ -40,8 +38,8 @@ class DIContainer {
 		}
 
 		// Инициализация репозиториев
-		this.departmentRepository = new DepartmentRepository(this.dbClient);
-		this.employeeRepository = new EmployeeRepository(this.dbClient, this.departmentRepository);
+		this.departmentRepository = new DepartmentRepository(this.dbClient!);
+		this.employeeRepository = new EmployeeRepository(this.dbClient!);
 
 		// Инициализация сервисов
 		this.employeeService = new EmployeeService(
@@ -51,8 +49,8 @@ class DIContainer {
 		this.departmentService = new DepartmentService(this.departmentRepository);
 
 		// Seed данных для демонстрации
-		const sourceA = new SourceAAdapter(this.dbClient);
-		const sourceB = new SourceBAdapter(this.dbClient);
+		// const sourceA = new SourceAAdapter(this.dbClient);
+		// const sourceB = new SourceBAdapter(this.dbClient);
 
 		// Очищаем и заполняем тестовыми данными
 		// await Promise.all([

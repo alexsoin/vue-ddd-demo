@@ -150,7 +150,7 @@
 		<EmployeeModal
 			:is-open="modalOpen"
 			:mode="modalMode"
-			:employee="modalEmployee || undefined"
+			:employee="modalEmployee || null"
 			:saving="saving"
 			:error="saveError"
 			@save="handleModalSave"
@@ -160,8 +160,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
-import { Employee } from '../../domain/entities/employee.entity';
+import { ref, watch, onMounted } from 'vue';
 import { useEmployees } from '../composables/useEmployees';
 import { useDepartments } from '../composables/useDepartments';
 import EmployeeModal from './EmployeeModal.vue';

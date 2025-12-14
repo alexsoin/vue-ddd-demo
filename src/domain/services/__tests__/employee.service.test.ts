@@ -12,10 +12,10 @@ describe('EmployeeService', () => {
 	let dbClient: IDBClient;
 
 	beforeEach(async () => {
-		dbClient = new IDBClient();
+		dbClient = IDBClient.getInstance();
 		await initDB(dbClient);
 		departmentRepository = new DepartmentRepository(dbClient);
-		employeeRepository = new EmployeeRepository(dbClient, departmentRepository);
+		employeeRepository = new EmployeeRepository(dbClient);
 		service = new EmployeeService(employeeRepository, departmentRepository);
 	});
 

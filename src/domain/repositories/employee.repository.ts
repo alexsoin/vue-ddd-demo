@@ -1,13 +1,9 @@
 import { Employee } from '../entities/employee.entity';
 import type { EmployeeDTO } from '../dto/employee.dto';
-import { EmployeeMapper } from '../mappers/employee.mapper';
 import { IDBClient } from '../../infrastructure/indexeddb/idb.client';
 import { DB_CONFIG } from '../../infrastructure/indexeddb/migrations';
-import { BaseAdapter } from '../../infrastructure/indexeddb/adapters/base.adapter';
 import { SourceAAdapter } from '../../infrastructure/indexeddb/adapters/source-a.adapter';
 import { SourceBAdapter } from '../../infrastructure/indexeddb/adapters/source-b.adapter';
-import { SOURCES_PRIORITY, hasHigherPriority } from '../../config/sources-priority.config';
-import type { IDepartmentRepository } from './department.repository';
 
 /**
  * Интерфейс репозитория сотрудников
@@ -34,15 +30,12 @@ export interface EmployeeFilter {
  * Репозиторий для работы с сотрудниками и двумя вспомогательными источниками
  */
 export class EmployeeRepository implements IEmployeeRepository {
-	private mapper: EmployeeMapper;
 	private sourceA: SourceAAdapter;
 	private sourceB: SourceBAdapter;
 
 	constructor(
-		private client: IDBClient,
-		private departmentRepository: IDepartmentRepository
+		private client: IDBClient
 	) {
-		this.mapper = new EmployeeMapper(departmentRepository);
 		this.sourceA = new SourceAAdapter(client);
 		this.sourceB = new SourceBAdapter(client);
 	}
@@ -52,17 +45,17 @@ export class EmployeeRepository implements IEmployeeRepository {
    */
 	async findById(id: string): Promise<any | null> {
 		// получаем основного сотрудника
-		const raw = await this.client.get(DB_CONFIG.stores.employees, id);
+		const raw: any = await this.client.get(DB_CONFIG.stores.employees, id);
 		if (!raw) return null;
 		// достаём дополняющие поля
 		const extA = await this.sourceA.getById(id).catch(() => ({}));
 		const extB = await this.sourceB.getById(id).catch(() => ({}));
 		return {
 			...raw,
-			phone: extA?.phone ?? null,
-			address: extA?.address ?? null,
-			comment: extB?.comment ?? null,
-			hobbies: extB?.hobbies ?? null
+			phone: extA && 'phone' in extA ? extA.phone : null,
+			address: extA && 'address' in extA ? extA.address : null,
+			comment: extB && 'comment' in extB ? extB.comment : null,
+			hobbies: extB && 'hobbies' in extB ? extB.hobbies : null
 		};
 	}
 
@@ -71,7 +64,7 @@ export class EmployeeRepository implements IEmployeeRepository {
    */
 	async findAll(filter?: EmployeeFilter): Promise<any[]> {
 		// Получаем всех из employees
-		const all = await this.client.getAll(DB_CONFIG.stores.employees);
+		const all: any[] = await this.client.getAll(DB_CONFIG.stores.employees);
 		// Для каждого сотрудника подмешиваем доп.данные
 		const withSources = await Promise.all(
 			all.map(async raw => {
@@ -80,10 +73,10 @@ export class EmployeeRepository implements IEmployeeRepository {
 				const extB = await this.sourceB.getById(id).catch(() => ({}));
 				return {
 					...raw,
-					phone: extA?.phone ?? null,
-					address: extA?.address ?? null,
-					comment: extB?.comment ?? null,
-					hobbies: extB?.hobbies ?? null
+					phone: extA && 'phone' in extA ? extA.phone : null,
+					address: extA && 'address' in extA ? extA.address : null,
+					comment: extB && 'comment' in extB ? extB.comment : null,
+					hobbies: extB && 'hobbies' in extB ? extB.hobbies : null
 				};
 			})
 		);
@@ -127,7 +120,7 @@ export class EmployeeRepository implements IEmployeeRepository {
 
 	async deactivate(id: string): Promise<void> {
 		// Найдём сотрудника и деактивируем
-		const raw = await this.client.get(DB_CONFIG.stores.employees, id);
+		const raw: any = await this.client.get(DB_CONFIG.stores.employees, id);
 		if (!raw) throw new Error(`Employee with id ${id} not found`);
 		raw.isActive = false;
 		await this.client.put(DB_CONFIG.stores.employees, raw);

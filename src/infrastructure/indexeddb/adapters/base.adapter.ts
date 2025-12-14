@@ -1,5 +1,4 @@
 import { IDBClient } from '../idb.client';
-import { DB_CONFIG } from '../migrations';
 
 /**
  * Базовый адаптер для источников данных

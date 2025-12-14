@@ -203,7 +203,7 @@ import DepartmentSelect from './DepartmentSelect.vue';
 const props = withDefaults(defineProps<{
 	isOpen: boolean;
 	mode?: 'create' | 'edit';
-	employee?: Employee;
+	employee?: Employee | null;
 	saving?: boolean;
 	error?: string | null;
 }>(), {
@@ -246,15 +246,13 @@ watch(
 			form.departmentId = employee.departmentId;
 			form.positionCode = employee.position?.code || '';
 			form.positionName = employee.position?.name || '';
-			form.startDate = employee.startDate
-				? new Date(employee.startDate).toISOString().split('T')[0]
-				: '';
+			form.startDate = employee.startDate?.toISOString().split('T')[0] || '';
 			form.isRemote = employee.isRemote;
 			// вспомогательные
-			form.phone = employee.phone || '';
-			form.address = employee.address || '';
-			form.comment = employee.comment || '';
-			form.hobbies = employee.hobbies || '';
+			form.phone = employee['phone'] || '';
+			form.address = employee['address'] || '';
+			form.comment = employee['comment'] || '';
+			form.hobbies = employee['hobbies'] || '';
 		} else {
 			// Сброс формы для создания
 			form.firstName = '';

@@ -2,13 +2,12 @@ import { BaseMapper } from './base.mapper';
 import { Employee } from '../entities/employee.entity';
 import type { EmployeeDTO } from '../dto/employee.dto';
 import { DictionaryVO } from '../value-objects/dictionary.vo';
-import type { IDepartmentRepository } from '../repositories/department.repository';
 
 /**
  * Маппер для преобразования EmployeeDTO ↔ Employee
  */
 export class EmployeeMapper extends BaseMapper<EmployeeDTO, Employee> {
-	constructor(private departmentRepository: IDepartmentRepository) {
+	constructor() {
 		super();
 	}
 
@@ -59,11 +58,11 @@ export class EmployeeMapper extends BaseMapper<EmployeeDTO, Employee> {
 			first_name: domain.firstName,
 			last_name: domain.lastName,
 			email: domain.email,
-			is_active: this.transformBoolean(domain.isActive, 'toDTO', 'is_active') as 'true' | 'false' | boolean,
-			is_remote: this.transformBoolean(domain.isRemote, 'toDTO', 'is_remote') as 'true' | 'false' | boolean,
-			start_date: domain.startDate ? this.transformDate(domain.startDate, 'toDTO') as string : null,
-			last_seen: domain.lastSeen ? this.transformDate(domain.lastSeen, 'toDTO') as string : null,
-			position: domain.position ? this.transformDictionary(domain.position, 'toDTO') as { code: string; name: string } : null,
+			is_active: super.transformBoolean(domain.isActive, 'toDTO', 'is_active') as 'true' | 'false' | boolean,
+			is_remote: super.transformBoolean(domain.isRemote, 'toDTO', 'is_remote') as 'true' | 'false' | boolean,
+			start_date: domain.startDate ? super.transformDate(domain.startDate, 'toDTO') as string : null,
+			last_seen: domain.lastSeen ? super.transformDate(domain.lastSeen, 'toDTO') as string : null,
+			position: domain.position ? super.transformDictionary(domain.position, 'toDTO') as { code: string; name: string } : null,
 			...domain.meta,
 		};
 
@@ -75,19 +74,5 @@ export class EmployeeMapper extends BaseMapper<EmployeeDTO, Employee> {
 		return dto;
 	}
 
-	/**
-   * Вспомогательные методы трансформации (наследуются от BaseMapper, но переопределены для типизации)
-   */
-	private transformBoolean(value: any, direction: 'toDomain' | 'toDTO', fieldName: string): boolean | 'true' | 'false' | null {
-		return super['transformBoolean'](value, direction, fieldName);
-	}
-
-	private transformDate(value: any, direction: 'toDomain' | 'toDTO'): Date | string | null {
-		return super['transformDate'](value, direction);
-	}
-
-	private transformDictionary(value: any, direction: 'toDomain' | 'toDTO'): DictionaryVO | { code: string; name: string } | null {
-		return super['transformDictionary'](value, direction);
-	}
 }
 

@@ -40,7 +40,7 @@ export abstract class BaseMapper<DTO, Domain> {
 	/**
    * Преобразование даты ISO ↔ Date
    */
-	private transformDate(value: any, direction: 'toDomain' | 'toDTO'): Date | string | null {
+	protected transformDate(value: any, direction: 'toDomain' | 'toDTO'): Date | string | null {
 		if (value === null || value === undefined || value === '') {
 			return null;
 		}
@@ -55,7 +55,7 @@ export abstract class BaseMapper<DTO, Domain> {
 	/**
    * Преобразование boolean ↔ 'true'/'false'
    */
-	private transformBoolean(
+	protected transformBoolean(
 		value: any,
 		direction: 'toDomain' | 'toDTO',
 		fieldName: string
@@ -87,7 +87,7 @@ export abstract class BaseMapper<DTO, Domain> {
 	/**
    * Преобразование словаря
    */
-	private transformDictionary(value: any, direction: 'toDomain' | 'toDTO'): DictionaryVO | { code: string; name: string } | null {
+	protected transformDictionary(value: any, direction: 'toDomain' | 'toDTO'): DictionaryVO | { code: string; name: string } | null {
 		if (!value) {
 			return null;
 		}
@@ -114,7 +114,7 @@ export abstract class BaseMapper<DTO, Domain> {
 	/**
    * Преобразование nullable (пустые строки → null)
    */
-	private transformNullable(value: any): any {
+	protected transformNullable(value: any): any {
 		if (value === '' || value === undefined) {
 			return null;
 		}

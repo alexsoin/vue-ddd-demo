@@ -52,9 +52,9 @@ class MockIDBObjectStore {
 		return request;
 	}
 
-	index(name: string): any {
+	index(_name: string): any {
 		return {
-			getAll: (range?: any) => {
+			getAll: (_range?: any) => {
 				const request = new MockIDBRequest();
 				request.result = Array.from(this.data.values());
 				return request;
@@ -69,7 +69,7 @@ class MockIDBDatabase {
 	};
 	private stores: Map<string, MockIDBObjectStore> = new Map();
 
-	transaction(storeNames: string[], mode: string = 'readonly'): any {
+	transaction(storeNames: string[], _mode: string = 'readonly'): any {
 		const stores = storeNames.map((name) => {
 			if (!this.stores.has(name)) {
 				this.stores.set(name, new MockIDBObjectStore());
@@ -87,7 +87,7 @@ class MockIDBDatabase {
 
 // Глобальный mock для indexedDB
 (global as any).indexedDB = {
-	open: (name: string, version: number) => {
+	open: (_name: string, _version: number) => {
 		const request = new MockIDBRequest();
 		request.result = new MockIDBDatabase();
 		return request;

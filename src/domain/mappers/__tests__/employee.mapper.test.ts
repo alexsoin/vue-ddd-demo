@@ -1,20 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { EmployeeMapper } from '../employee.mapper';
 import type { EmployeeDTO } from '../../dto/employee.dto';
-import { DepartmentRepository } from '../../repositories/department.repository';
-import { IDBClient } from '../../../infrastructure/indexeddb/idb.client';
-import { initDB } from '../../../infrastructure/indexeddb/migrations';
 
 describe('EmployeeMapper', () => {
 	let mapper: EmployeeMapper;
-	let departmentRepository: DepartmentRepository;
-	let dbClient: IDBClient;
 
 	beforeEach(async () => {
-		dbClient = IDBClient.getInstance();
-		await initDB(dbClient);
-		departmentRepository = new DepartmentRepository(dbClient);
-		mapper = new EmployeeMapper(departmentRepository);
+		mapper = new EmployeeMapper();
 	});
 
 	describe('toDomain', () => {

@@ -24,7 +24,7 @@ export const DB_CONFIG = {
 export function applyMigrations(
 	db: IDBDatabase,
 	oldVersion: number,
-	newVersion: number | null
+	_newVersion: number | null
 ): void {
 	// Создание stores
 	if (oldVersion < 1) {
